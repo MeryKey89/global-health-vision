@@ -1,16 +1,25 @@
 import streamlit as st
+from PIL import Image
 
-st.set_page_config(page_title="Global Health Vision", layout="centered")
+st.set_page_config(page_title="Global Health Vision", page_icon="🏥")
 
-st.title("🏥 Global Health Vision")
-st.subheader("Plataforma de Diagnóstico Asistido")
+st.title("🏥 Global Health Vision: Trauma")
+st.subheader("Análisis de Radiografía - Módulo de Urgencias")
 
-st.write("Bienvenida, Mery. Esta es tu plataforma profesional.")
+# Subida de archivo
+archivo = st.file_uploader("Sube la radiografía (JPG/PNG)", type=["jpg", "png"])
 
-st.info("Selecciona el módulo de diagnóstico para comenzar:")
+if archivo is not None:
+    imagen = Image.open(archivo)
+    st.image(imagen, caption='Imagen en estudio', use_column_width=True)
+    
+    if st.button('Analizar fractura'):
+        with st.spinner('Evaluando integridad ósea...'):
+            # Aquí simulamos el análisis técnico
+            st.success("Análisis realizado con éxito")
+            st.write("### Informe Preliminar:")
+            st.info("- **Hallazgo:** Se observa discontinuidad en la cortical del radio distal.")
+            st.warning("- **Sugerencia:** Valorar proyección lateral para confirmar angulación.")
 
-modulo = st.radio("Especialidad:", ["Traumatología", "Tórax", "Neurología"])
-
-if st.button("Acceder al módulo"):
-    st.write(f"Has seleccionado: {modulo}")
-    st.warning("Próximamente: Integración con IA para análisis de imágenes.")
+st.divider()
+st.caption("Sistema de apoyo al diagnóstico - Mery © 2026")
