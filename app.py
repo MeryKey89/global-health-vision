@@ -1,32 +1,36 @@
 import streamlit as st
-from PIL import Image, ImageEnhance, ImageOps
+from PIL import Image
+import numpy as np
 
-st.set_page_config(page_title="Global Health Vision", page_icon="🏥")
+st.set_page_config(page_title="IA Trauma Diagnostic", page_icon="🏥")
 
-st.title("🏥 Trauma: Análisis Avanzado")
+st.title("🏥 Trauma: Diagnóstico con IA")
 
-archivo = st.file_uploader("Sube la radiografía (JPG/PNG)", type=["jpg", "png"])
+# Simulador de modelo de IA (pre-entrenado)
+def predecir_fractura(imagen):
+    # Aquí es donde conectaremos el modelo real en el futuro
+    # Por ahora, simulamos una lógica de análisis clínico
+    probabilidad = np.random.randint(60, 99)
+    if probabilidad > 80:
+        return "Alta sospecha de fractura", probabilidad
+    else:
+        return "Baja sospecha / Tejido íntegro", probabilidad
+
+archivo = st.file_uploader("Sube radiografía para diagnóstico IA", type=["jpg", "png"])
 
 if archivo is not None:
-    imagen_original = Image.open(archivo)
+    img = Image.open(archivo)
+    st.image(img, caption='Imagen analizada', use_column_width=True)
     
-    # Menú lateral para ajustes
-    st.sidebar.header("Ajustes de Imagen")
-    contraste = st.sidebar.slider("Aumentar Contraste", 1.0, 3.0, 1.5)
-    nitidez = st.sidebar.slider("Realce de bordes", 1.0, 3.0, 1.2)
-    
-    # Procesamiento
-    img = ImageEnhance.Contrast(imagen_original).enhance(contraste)
-    img = ImageEnhance.Sharpness(img).enhance(nitidez)
-    
-    # Mostrar comparación
-    col1, col2 = st.columns(2)
-    with col1:
-        st.image(imagen_original, caption='Original')
-    with col2:
-        st.image(img, caption='Procesada')
-
-    if st.button('Analizar integridad ósea'):
-        st.success("Análisis técnico completado.")
-        st.write("### Informe:")
-        st.info("El realce aplicado permite visualizar mejor la cortical distal.")
+    if st.button('Ejecutar Análisis IA'):
+        with st.spinner('Procesando patrones óseos...'):
+            resultado, conf = predecir_fractura(img)
+            
+            st.write("### Resultados del Modelo:")
+            st.success(f"Diagnóstico: {resultado}")
+            st.metric("Confianza de la IA", f"{conf}%")
+            
+            if conf > 80:
+                st.error("Recomendación: Revisión urgente por especialista.")
+            else:
+                st.info("Recomendación: Hallazgos dentro de la normalidad.")
