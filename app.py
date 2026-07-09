@@ -1,36 +1,27 @@
 import streamlit as st
-from PIL import Image
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
 
 st.set_page_config(page_title="IA Trauma Diagnostic", page_icon="🏥")
+st.title("🏥 Diagnóstico IA: Trauma")
 
-st.title("🏥 Trauma: Diagnóstico con IA")
+# Entrenamos un modelo simple en tiempo real
+# (Simulamos características: Densidad, Bordes, Intensidad)
+X_train = np.array([[10, 2, 80], [80, 70, 10], [15, 5, 75], [90, 80, 5]])
+y_train = np.array([0, 1, 0, 1]) # 0: Sano, 1: Fractura
+modelo = RandomForestClassifier().fit(X_train, y_train)
 
-# Simulador de modelo de IA (pre-entrenado)
-def predecir_fractura(imagen):
-    # Aquí es donde conectaremos el modelo real en el futuro
-    # Por ahora, simulamos una lógica de análisis clínico
-    probabilidad = np.random.randint(60, 99)
-    if probabilidad > 80:
-        return "Alta sospecha de fractura", probabilidad
-    else:
-        return "Baja sospecha / Tejido íntegro", probabilidad
-
-archivo = st.file_uploader("Sube radiografía para diagnóstico IA", type=["jpg", "png"])
+archivo = st.file_uploader("Sube una imagen para análisis", type=["jpg", "png"])
 
 if archivo is not None:
-    img = Image.open(archivo)
-    st.image(img, caption='Imagen analizada', use_column_width=True)
-    
-    if st.button('Ejecutar Análisis IA'):
-        with st.spinner('Procesando patrones óseos...'):
-            resultado, conf = predecir_fractura(img)
-            
-            st.write("### Resultados del Modelo:")
-            st.success(f"Diagnóstico: {resultado}")
-            st.metric("Confianza de la IA", f"{conf}%")
-            
-            if conf > 80:
-                st.error("Recomendación: Revisión urgente por especialista.")
-            else:
-                st.info("Recomendación: Hallazgos dentro de la normalidad.")
+    st.image(archivo, caption='Análisis en curso...', use_column_width=True)
+    if st.button('Analizar con IA'):
+        # Simulamos extracción de datos de la imagen
+        datos_imagen = np.array([[np.random.randint(0, 100), np.random.randint(0, 100), np.random.randint(0, 100)]])
+        prediccion = modelo.predict(datos_imagen)
+        
+        st.write("### Resultado del Modelo:")
+        if prediccion[0] == 1:
+            st.error("🚨 ALERTA: Patrón compatible con fractura.")
+        else:
+            st.success("✅ Diagnóstico: Tejido óseo íntegro.")
